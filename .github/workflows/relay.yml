@@ -1,0 +1,29 @@
+name: Relay SOCKS5 via Issues
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_c2s:
+        description: 'شماره Issue کلاینت به سرور'
+        required: true
+      issue_s2c:
+        description: 'شماره Issue سرور به کلاینت'
+        required: true
+
+jobs:
+  server:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: اجرای سرور
+        env:
+          RELAY_TOKEN: ${{ secrets.RELAY_TOKEN }}
+          ISSUE_C2S: ${{ github.event.inputs.issue_c2s }}
+          ISSUE_S2C: ${{ github.event.inputs.issue_s2c }}
+        run: |
+          pip install PyGithub
+          python server_relay.py
